@@ -40,9 +40,12 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+// Stores the key-value pairs (shortURL - longURL) into the urlDatabase object.
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  let longURL = req.body.longURL;
+  let shortURL = generateRandomStrings();
+  urlDatabase[shortURL] = longURL;
+  res.redirect('/urls/new');         // Respond with 'Ok' (we will replace this)
 });
 
 app.get("/urls/:shortURL", (req, res) => {
