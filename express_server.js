@@ -7,8 +7,14 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+// GET request for the homepage.
 app.get("/", (req, res) => {
   res.send("Hello!");
+});
+
+// GET request for handling json files.
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
 });
 
 app.listen(PORT, () => {
