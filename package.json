@@ -1,0 +1,25 @@
+{
+  "name": "tiny-app-project",
+  "version": "1.0.0",
+  "description": "A full stack web app built with Node and Express that allows users to shorten long URLs (similar to bit.ly).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neumand/tiny-app-project.git"
+  },
+  "keywords": [
+    "tiny",
+    "app",
+    "URL",
+    "shortener"
+  ],
+  "author": "David Neuman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Neumand/tiny-app-project/issues"
+  },
+  "homepage": "https://github.com/Neumand/tiny-app-project#readme"
+}
