@@ -9,6 +9,15 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-    <!-- Add EJS code here -->
+  <h1><strong>Welcome to TinyApp!</strong></h1>
+  <br>
+  <h2><a href="#">Create new TinyURL</a></h2>
+  <br>
+  <h3><strong>URLs to Shorten:</strong></h3>
+  <ul>
+    <% for(var each in urls) { %>
+      <li><strong><%= each %></strong> : <%= urls[each] %></li>
+    <% }; %>
+  </ul>
 </body>
 </html>
