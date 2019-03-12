@@ -1,6 +1,13 @@
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
+const bodyParser = require("body-parser");
+
+// Generate random string of 6 characters to assign to new shortened URL.
+const generateRandomStrings = () => Math.random().toString(36).substr(2,6);
+
+// Used to make the data more readable.
+app.use(bodyParser.urlencoded({extended: true}));
 
 // Set the view engine to be EJS.
 app.set("view engine", "ejs");
@@ -26,6 +33,16 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
+});
+
+// Create new GET route to show the form in 'urls_new.js'.
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
 app.get("/urls/:shortURL", (req, res) => {
