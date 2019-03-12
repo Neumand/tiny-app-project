@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // Set the view engine to be EJS.
 app.set("view engine", "ejs");
 
-var urlDatabase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
@@ -45,7 +45,12 @@ app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   let shortURL = generateRandomStrings();
   urlDatabase[shortURL] = longURL;
-  res.redirect(`/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${shortURL}`);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(`${longURL}`);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
