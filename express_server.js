@@ -42,6 +42,12 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+app.post("/login", (req, res) => {
+  let username = req.body.username;
+  res.cookie("username", username);
+  res.redirect("/urls");
+})
+
 // Create new GET route to show the form in 'urls_new.js'.
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
