@@ -42,11 +42,13 @@ app.post("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
+
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(`${longURL}`);
 });
 
+// 
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
@@ -55,10 +57,18 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-// Delete the stored shortened URL.
+// Handle request to delete an existing shortened URL.
 app.post("/urls/:shortURL/delete", (req, res) => {
   let shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
+  res.redirect("/urls");
+})
+
+// Handle request to edit an existing URL.
+app.post("/urls/:shortURL", (req, res) => {
+  let longURL = req.body.longURL;
+  let shortURL = req.params.shortURL;
+  urlDatabase[shortURL] = longURL;
   res.redirect("/urls");
 })
 

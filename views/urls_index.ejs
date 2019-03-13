@@ -9,14 +9,16 @@
 <body style="font-size:20px; padding:50px;">
   <h1><% include partials/_header %></h1>
   <br>
-  <h2><a href="#">Create new TinyURL</a></h2>
+  <h2><a href='/urls/new'>Create TinyURL</a></h2>
   <br>
   <h3><strong>URLs to Shorten:</strong></h3>
   <ul>
   <% for(var each in urls) { %>
   <li><strong><%= each %></strong> : <%= urls[each] %></li>
-  <form method="POST" action="/urls/<%= each%>/delete">
+  <form style="display: inline" method="POST" action="/urls/<%= each%>/delete">
   <button type="submit" class="btn btn-primary">Delete</button></form>
+  <form style="display: inline" method="GET" action="/urls/<%= each%>">
+  <button type="submit" class="btn btn-primary">Edit</button></form>
     <% }; %>
   </ul>
 </body>
