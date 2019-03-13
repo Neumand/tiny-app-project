@@ -1,13 +1,17 @@
-var express = require("express");
-var app = express();
-var PORT = 8080; // default port 8080
+const express = require("express");
+const app = express();
+const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
 // Generate random string of 6 characters to assign to new shortened URL.
 const generateRandomStrings = () => Math.random().toString(36).substr(2,6);
 
 // Used to make the data more readable.
 app.use(bodyParser.urlencoded({extended: true}));
+
+// Used to help read the values from cookies.
+app.use(cookieParser());
 
 // Set the view engine to be EJS.
 app.set("view engine", "ejs");
