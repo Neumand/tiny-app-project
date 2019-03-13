@@ -13,8 +13,10 @@
   <br>
   <h3><strong>URLs to Shorten:</strong></h3>
   <ul>
-    <% for(var each in urls) { %>
-      <li><strong><%= each %></strong> : <%= urls[each] %></li>
+  <% for(var each in urls) { %>
+  <li><strong><%= each %></strong> : <%= urls[each] %></li>
+  <form method="POST" action="/urls/9sm5xK/delete">
+  <button type="submit" class="btn btn-primary">Delete</button></form>
     <% }; %>
   </ul>
 </body>
