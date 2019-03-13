@@ -43,9 +43,16 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+// Username registered as a cookie when login button is clicked.
 app.post("/login", (req, res) => {
   let username = req.body.username;
   res.cookie("username", username);
+  res.redirect("/urls");
+})
+
+app.post("/logout", (req, res) => {
+  let username = req.body.username;
+  res.clearCookie("username");
   res.redirect("/urls");
 })
 
