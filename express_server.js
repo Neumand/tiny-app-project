@@ -17,11 +17,6 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-// GET request for the homepage.
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
 // GET request for handling json files.
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -35,11 +30,6 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// Create new GET route to show the form in 'urls_new.js'.
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
-});
-
 // Stores the key-value pairs (shortURL - longURL) into the urlDatabase object.
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
@@ -48,6 +38,10 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+// Create new GET route to show the form in 'urls_new.js'.
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(`${longURL}`);
@@ -61,10 +55,12 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-// Test functionality.
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+// Delete the stored shortened URL.
+app.post("/urls/:shortURL/delete", (req, res) => {
+  let shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect("/urls");
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
