@@ -51,7 +51,10 @@ app.post("/login", (req, res) => {
 
 // Create new GET route to show the form in 'urls_new.js'.
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+    username: req.cookies["username"]
+  }
+  res.render("urls_new", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
