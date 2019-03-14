@@ -36,6 +36,12 @@ const users = {
   }
 }
 
+// Checks if an email already exists in the database and returns a boolean.
+const emailVerification = (email) => {
+  const usersArr = Object.values(users);
+  return usersArr.some(check => check.email === email);
+}
+
 // GET request for handling json files.
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -44,6 +50,7 @@ app.get("/urls.json", (req, res) => {
 // Used to keep track of all of the URLs and their shortened forms.
 app.get("/urls", (req, res) => {
   let templateVars = {
+    user: users,
     username: req.cookies["username"],
     urls: urlDatabase
   };
@@ -74,6 +81,7 @@ app.post("/logout", (req, res) => {
 // Create new GET route to show the form in 'urls_new.js'.
 app.get("/urls/new", (req, res) => {
   let templateVars = {
+    user: users,
     username: req.cookies["username"]
   }
   res.render("urls_new", templateVars);
@@ -87,6 +95,7 @@ app.get("/u/:shortURL", (req, res) => {
 // 
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
+    user: users,
     username: req.cookies["username"],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]
@@ -115,10 +124,11 @@ app.get("/register", (req, res) => {
 })
 
 // Create new user and add to the users database.
+// See emailVerification function description above.
 app.post("/register", (req, res) => {
   const email = req.body.email === '' ? null : req.body.email;
   const password = req.body.password === '' ? null : req.body.password;
-  if (email === null || password === null) {
+  if (email === null || password === null || emailVerification(email)) {
     res.status(404).end();
   } else {
     const userId = generateRandomId();
