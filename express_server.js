@@ -88,7 +88,7 @@ app.post("/login", (req, res) => {
   const password = req.body.password === '' ? null : req.body.password;
   if (emailVerification(email)) {
     if (passwordVerification(password)) {
-      res.cookie('userID', userId);
+      res.cookie('userId', userId);
       res.redirect("/urls");
     }} else {
     res.status(403).end();
@@ -96,7 +96,7 @@ app.post("/login", (req, res) => {
 
 // User's cookie data will be cleared and therefore logged out.
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("userId");
   res.redirect("/urls");
 })
 
@@ -161,7 +161,7 @@ app.post("/register", (req, res) => {
       email,
       password
     }
-    res.cookie('userID', userId);
+    res.cookie('userId', userId);
     res.redirect("/urls");
   }
 })
