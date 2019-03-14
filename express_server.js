@@ -119,7 +119,11 @@ app.get("/urls/new", (req, res) => {
     user: users[userId],
     urls: urlDatabase
   };
-  res.render("urls_new", templateVars);
+  if (!userId) {
+    res.redirect('/login');
+  } else {
+    res.render("urls_new", templateVars);
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
