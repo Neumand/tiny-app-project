@@ -8,15 +8,15 @@
 </head>
   <h1><strong>Welcome to TinyApp!</strong></h1>
   <body style="font-size:20px; padding:50px;">
-  <% if (username) { %>
-  <h3>Logged in as: <%= username %>!</h3>
+  <% if (user) { %>
+  <h3>Logged in as: <%= user.email %>!</h3>
   <form action="/logout" method="POST">
   <button type="submit" class="btn btn-primary">Logout</button>
   </form>
   <% } else{ %>
-  <label for="username">Username:</label>
+  <label for="email">Email:</label>
   <form action="/login" method="POST">
-  <input type="text" name="username" placeholder="Enter username"> 
+  <input type="text" name="email" placeholder="Enter email"> 
       <button type="submit" class="btn btn-primary">Login</button>
     </form>
     <form action="/register" method="GET">
