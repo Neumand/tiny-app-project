@@ -96,7 +96,12 @@ app.post("/urls/:shortURL", (req, res) => {
 
 // Direct new users to registration page.
 app.get("/register", (req, res) => {
-  res.render("register");
+  res.render("register", {username: null});
+})
+
+// Create new user.
+app.post("/register", (req, res) => {
+  console.log(req.body);
 })
 
 app.listen(PORT, () => {
