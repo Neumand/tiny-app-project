@@ -4,9 +4,6 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
-// Generate random ID of 6 characters for new shortened URL or new user ID.
-const generateRandomId = () => Math.random().toString(36).substr(2,6);
-
 // Used to make the data more readable.
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -29,12 +26,14 @@ const users = {
     email: "user@example.com", 
     password: "purple-monkey-dinosaur"
   },
- "user2RandomID": {
+  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
     password: "dishwasher-funk"
   }
 }
+// Generate random ID of 6 characters for new shortened URL or new user ID.
+const generateRandomId = () => Math.random().toString(36).substr(2,6);
 
 // Checks if an email already exists in the database and returns a boolean.
 const emailVerification = (email) => {
@@ -42,22 +41,28 @@ const emailVerification = (email) => {
   return usersArr.some(check => check.email === email);
 }
 
-// Used for login verification purposes.
-// If email exists in the DB, check if the password corresponds to the email.
+// If email exists in the DB during login, check if the password corresponds to the email.
 const passwordVerification = (password) => {
   const usersArr = Object.values(users);
   return usersArr.some(check => check.password === password);
 }
 
-// GET request for handling json files.
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
+// Find user's ID for login requests.
+const findUserId = (email, password) => {
+  for (id in users) {
+    if (id.email === email && id.password === password) {
+      return id.id;
+    } else {
+      return null;
+    }
+  }
+}
 
 // Used to keep track of all of the URLs and their shortened forms.
 app.get("/urls", (req, res) => {
+  const userId = req.cookies["user_id"];
   let templateVars = {
-    user: users.userId,
+    user: users[userId],
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
@@ -73,8 +78,9 @@ app.post("/urls", (req, res) => {
 
 // Direct existing users to login page.
 app.get("/login", (req, res) => {
+  const userId = req.cookies["user_id"];
   let templateVars = {
-    user: users.userId,
+    user: users[userId],
     urls: urlDatabase
   };
   res.render("login", templateVars);
@@ -82,29 +88,34 @@ app.get("/login", (req, res) => {
 
 // Log in an existing user, verifying that their email exists in the DB and password matches.
 app.post("/login", (req, res) => {
-  console.log(req.body);
-  console.log(req.header);
   const email = req.body.email === '' ? null : req.body.email;
   const password = req.body.password === '' ? null : req.body.password;
+  let userId = findUserId(email, password);
   if (emailVerification(email)) {
     if (passwordVerification(password)) {
-      res.cookie('userId', userId);
-      res.redirect("/urls");
-    }} else {
-    res.status(403).end();
-  }})
+        res.cookie("user_id", userId);
+        res.redirect("/urls");
+      } else {
+        res.status(403).end();
+        // res.send("Incorrect password. Please try again.");
+      }
+  }
+  res.send("No account found with provided email address.")
+})
 
 // User's cookie data will be cleared and therefore logged out.
 app.post("/logout", (req, res) => {
-  res.clearCookie("userId");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 })
 
 // Create new GET route to show the form in 'urls_new.js'.
 app.get("/urls/new", (req, res) => {
+  const userId = req.cookies["user_id"];
   let templateVars = {
-    user: users.userId,
-  }
+    user: users[userId],
+    urls: urlDatabase
+  };
   res.render("urls_new", templateVars);
 });
 
@@ -115,10 +126,11 @@ app.get("/u/:shortURL", (req, res) => {
 
 // 
 app.get("/urls/:shortURL", (req, res) => {
+  const userId = req.cookies["user_id"];
   let templateVars = {
-    user: users.userId,
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    longURL: urlDatabase[req.params.shortURL],
+    user: users[userId]
   };
   res.render("urls_show", templateVars);
 });
@@ -140,8 +152,9 @@ app.post("/urls/:shortURL", (req, res) => {
 
 // Direct new users to registration page.
 app.get("/register", (req, res) => {
+  const userId = req.cookies["user_id"];
   let templateVars = {
-    user: users.userId,
+    user: users[userId],
     urls: urlDatabase
   };
   res.render("register", templateVars);
@@ -157,11 +170,11 @@ app.post("/register", (req, res) => {
   } else {
     const userId = generateRandomId();
     users[userId] = {
-      userId,
+      id: userId,
       email,
       password
     }
-    res.cookie('userId', userId);
+    res.cookie('user_id', userId);
     res.redirect("/urls");
   }
 })
