@@ -114,10 +114,17 @@ app.get("/register", (req, res) => {
   res.render("register", {username: null});
 })
 
-// Create new user.
+// Create new user and add to the users database.
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
-  
+  const userId = generateRandomId();
+  users[userId] = {
+    userId,
+    email,
+    password
+  }
+  res.cookie('userID', userId);
+  res.redirect("/urls");
 })
 
 app.listen(PORT, () => {
