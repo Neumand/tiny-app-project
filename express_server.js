@@ -16,10 +16,25 @@ app.use(cookieParser());
 // Set the view engine to be EJS.
 app.set("view engine", "ejs");
 
+// Database to store shortened URLs.
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+// Database to store user data.
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
 
 // GET request for handling json files.
 app.get("/urls.json", (req, res) => {
@@ -101,7 +116,7 @@ app.get("/register", (req, res) => {
 
 // Create new user.
 app.post("/register", (req, res) => {
-  console.log(req.body);
+  const { email, password } = req.body;
 })
 
 app.listen(PORT, () => {
