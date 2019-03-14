@@ -64,6 +64,11 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+// Direct existing users to login page.
+app.get("/login", (req, res) => {
+  res.render("/login");
+})
+
 // Username registered as a cookie when login button is clicked.
 app.post("/login", (req, res) => {
   let username = req.body.username;
