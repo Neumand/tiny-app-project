@@ -66,7 +66,11 @@ app.post("/urls", (req, res) => {
 
 // Direct existing users to login page.
 app.get("/login", (req, res) => {
-  res.render("login");
+  let templateVars = {
+    user: users.userId,
+    urls: urlDatabase
+  };
+  res.render("login", templateVars);
 })
 
 // Username registered as a cookie when login button is clicked.
@@ -122,7 +126,11 @@ app.post("/urls/:shortURL", (req, res) => {
 
 // Direct new users to registration page.
 app.get("/register", (req, res) => {
-  res.render("register", {username: null});
+  let templateVars = {
+    user: users.userId,
+    urls: urlDatabase
+  };
+  res.render("register", templateVars);
 })
 
 // Create new user and add to the users database.
