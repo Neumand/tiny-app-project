@@ -50,8 +50,7 @@ app.get("/urls.json", (req, res) => {
 // Used to keep track of all of the URLs and their shortened forms.
 app.get("/urls", (req, res) => {
   let templateVars = {
-    user: users,
-    username: req.cookies["username"],
+    user: users.userId,
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
@@ -81,8 +80,7 @@ app.post("/logout", (req, res) => {
 // Create new GET route to show the form in 'urls_new.js'.
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    user: users,
-    username: req.cookies["username"]
+    user: users.userId,
   }
   res.render("urls_new", templateVars);
 });
@@ -95,8 +93,7 @@ app.get("/u/:shortURL", (req, res) => {
 // 
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
-    user: users,
-    username: req.cookies["username"],
+    user: users.userId,
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]
   };
