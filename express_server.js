@@ -42,6 +42,13 @@ const emailVerification = (email) => {
   return usersArr.some(check => check.email === email);
 }
 
+// Used for login verification purposes.
+// If email exists in the DB, check if the password corresponds to the email.
+const passwordVerification = (password) => {
+  const usersArr = Object.values(users);
+  return usersArr.some(check => check.password === password);
+}
+
 // GET request for handling json files.
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -73,12 +80,19 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 })
 
-// Username registered as a cookie when login button is clicked.
+// Log in an existing user, verifying that their email exists in the DB and password matches.
 app.post("/login", (req, res) => {
-  let username = req.body.username;
-  res.cookie("username", username);
-  res.redirect("/urls");
-})
+  console.log(req.body);
+  console.log(req.header);
+  const email = req.body.email === '' ? null : req.body.email;
+  const password = req.body.password === '' ? null : req.body.password;
+  if (emailVerification(email)) {
+    if (passwordVerification(password)) {
+      res.cookie('userID', userId);
+      res.redirect("/urls");
+    }} else {
+    res.status(403).end();
+  }})
 
 // User's cookie data will be cleared and therefore logged out.
 app.post("/logout", (req, res) => {
