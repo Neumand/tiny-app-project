@@ -50,8 +50,8 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 })
 
+// User's cookie data will be cleared and therefore logged out.
 app.post("/logout", (req, res) => {
-  let username = req.body.username;
   res.clearCookie("username");
   res.redirect("/urls");
 })
