@@ -66,7 +66,7 @@ app.post("/urls", (req, res) => {
 
 // Direct existing users to login page.
 app.get("/login", (req, res) => {
-  res.render("/login");
+  res.render("login");
 })
 
 // Username registered as a cookie when login button is clicked.
