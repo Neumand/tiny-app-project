@@ -116,15 +116,20 @@ app.get("/register", (req, res) => {
 
 // Create new user and add to the users database.
 app.post("/register", (req, res) => {
-  const { email, password } = req.body;
-  const userId = generateRandomId();
-  users[userId] = {
-    userId,
-    email,
-    password
+  const email = req.body.email === '' ? null : req.body.email;
+  const password = req.body.password === '' ? null : req.body.password;
+  if (email === null || password === null) {
+    res.status(404).end();
+  } else {
+    const userId = generateRandomId();
+    users[userId] = {
+      userId,
+      email,
+      password
+    }
+    res.cookie('userID', userId);
+    res.redirect("/urls");
   }
-  res.cookie('userID', userId);
-  res.redirect("/urls");
 })
 
 app.listen(PORT, () => {
