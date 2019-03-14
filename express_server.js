@@ -49,13 +49,15 @@ const passwordVerification = (password) => {
 
 // Find user's ID for login requests.
 const findUserId = (email, password) => {
+  let userId = '';
   for (id in users) {
-    if (id.email === email && id.password === password) {
-      return id.id;
+    if (users[id]["email"] === email && users[id]["password"] === password) {
+      userId = users[id]["id"];
     } else {
-      return null;
+      userId = null;
     }
   }
+  return userId;
 }
 
 // Used to keep track of all of the URLs and their shortened forms.
@@ -91,16 +93,17 @@ app.post("/login", (req, res) => {
   const email = req.body.email === '' ? null : req.body.email;
   const password = req.body.password === '' ? null : req.body.password;
   let userId = findUserId(email, password);
+  console.log(userId);
   if (emailVerification(email)) {
     if (passwordVerification(password)) {
         res.cookie("user_id", userId);
         res.redirect("/urls");
       } else {
-        res.status(403).end();
-        // res.send("Incorrect password. Please try again.");
+        res.status(403).send("Incorrect password. Please try again.");
       }
+  } else {
+    res.send("No account found with provided email address.")
   }
-  res.send("No account found with provided email address.")
 })
 
 // User's cookie data will be cleared and therefore logged out.
