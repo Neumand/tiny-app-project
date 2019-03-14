@@ -4,8 +4,8 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 
-// Generate random string of 6 characters to assign to new shortened URL.
-const generateRandomStrings = () => Math.random().toString(36).substr(2,6);
+// Generate random ID of 6 characters for new shortened URL or new user ID.
+const generateRandomId = () => Math.random().toString(36).substr(2,6);
 
 // Used to make the data more readable.
 app.use(bodyParser.urlencoded({extended: true}));
@@ -53,7 +53,7 @@ app.get("/urls", (req, res) => {
 // Stores the key-value pairs (shortURL - longURL) into the urlDatabase object.
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
-  let shortURL = generateRandomStrings();
+  let shortURL = generateRandomId();
   urlDatabase[shortURL] = longURL;
   res.redirect(`/urls/${shortURL}`);
 });
@@ -117,6 +117,7 @@ app.get("/register", (req, res) => {
 // Create new user.
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+  
 })
 
 app.listen(PORT, () => {
