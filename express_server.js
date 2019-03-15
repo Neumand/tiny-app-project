@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 // Used to make the data more readable.
 app.use(bodyParser.urlencoded({extended: true}));
@@ -203,6 +204,7 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   const email = req.body.email === '' ? null : req.body.email;
   const password = req.body.password === '' ? null : req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   if (email === null || password === null || emailVerification(email)) {
     res.status(404).end();
   } else {
