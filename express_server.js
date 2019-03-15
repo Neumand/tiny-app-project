@@ -43,16 +43,29 @@ const emailVerification = (email) => {
 }
 
 // If email exists in the DB during login, check if the password corresponds to the email.
-const passwordVerification = (password) => {
-  const usersArr = Object.values(users);
-  return usersArr.some(check => check.password === password);
+// const passwordVerification = (password) => {
+  // const hashedPassword = users
+  // if (bcrypt.compareSync(password), )
+  // const usersArr = Object.values(users);
+  // return usersArr.some(check => check.password === password);
+// }
+
+// Search the users database for hashed password.
+const findHashedPassword = (email) => {
+  let hashedPassword = '';
+  for (const userId in users) {
+    if (users[userId]["email"] === email) {
+      hashedPassword = users[userId]["hashedPassword"];
+    }
+  }
+  return hashedPassword;
 }
 
 // Find user's ID for login requests.
-const findUserId = (email, password) => {
+const findUserId = (email, hashedPassword) => {
   let userId = '';
-  for (id in users) {
-    if (users[id]["email"] === email && users[id]["password"] === password) {
+  for (const id in users) {
+    if (users[id]["email"] === email && users[id]["hashedPassword"] === hashedPassword) {
       userId = users[id]["id"];
     } else {
       userId = null;
@@ -111,9 +124,10 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email === '' ? null : req.body.email;
   const password = req.body.password === '' ? null : req.body.password;
-  let userId = findUserId(email, password);
+  const hashedPassword = findHashedPassword(email);
+  let userId = findUserId(email, hashedPassword);
   if (emailVerification(email)) {
-    if (passwordVerification(password)) {
+    if (bcrypt.compareSync(password, hashedPassword)) {
         res.cookie("user_id", userId);
         res.redirect("/urls");
       } else {
@@ -212,8 +226,9 @@ app.post("/register", (req, res) => {
     users[userId] = {
       id: userId,
       email,
-      password
+      hashedPassword
     }
+    console.log(users[userId]);
     res.cookie('user_id', userId);
     res.redirect("/urls");
   }
