@@ -15,8 +15,8 @@ app.set("view engine", "ejs");
 
 // Database to store shortened URLs.
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2":{longURL:"http://www.lighthouselabs.ca", userId: "userRandomID"},
+  "9sm5xK":{longURL:"http://www.google.com", userId: "userRandomID"}
 };
 
 // Database to store user data.
@@ -72,9 +72,10 @@ app.get("/urls", (req, res) => {
 
 // Stores the key-value pairs (shortURL - longURL) into the urlDatabase object.
 app.post("/urls", (req, res) => {
+  const userId = req.cookies["user_id"];
   let longURL = req.body.longURL;
   let shortURL = generateRandomId();
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = {longURL: longURL, userId: userId};
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -136,7 +137,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const userId = req.cookies["user_id"];
   let templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL]["longURL"],
     user: users[userId]
   };
   res.render("urls_show", templateVars);
