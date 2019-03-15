@@ -87,8 +87,12 @@ app.post("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   let longURL = req.body.longURL;
   let shortURL = generateRandomId();
+  if (userId) {
   urlDatabase[shortURL] = {longURL: longURL, userId: userId};
   res.redirect(`/urls/${shortURL}`);
+  } else {
+    res.redirect('/login');
+  }
 });
 
 // Direct existing users to login page.
@@ -141,7 +145,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL]["longURL"];
   res.redirect(`${longURL}`);
 });
 
@@ -160,9 +164,14 @@ app.get("/urls/:shortURL", (req, res) => {
 
 // Handle request to delete an existing shortened URL.
 app.post("/urls/:shortURL/delete", (req, res) => {
+  const userId = req.cookies["user_id"];
   let shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  res.redirect("/urls");
+  if (userId) {
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
+    } else {
+      res.status(403).send("Error: Authorization denied.");
+    }
 })
 
 // Handle request to edit an existing URL.
@@ -170,8 +179,12 @@ app.post("/urls/:shortURL", (req, res) => {
   const userId = req.cookies["user_id"];
   let longURL = req.body.longURL;
   let shortURL = req.params.shortURL;
+  if (userId) {
   urlDatabase[shortURL] = {longURL: longURL, userId: userId};
   res.redirect("/urls");
+  } else {
+    res.status(403).send("Error: Authorization denied.");
+  }
 })
 
 // Direct new users to registration page.
