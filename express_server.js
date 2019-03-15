@@ -16,7 +16,7 @@ app.set("view engine", "ejs");
 // Database to store shortened URLs.
 const urlDatabase = {
   "b2xVn2":{longURL:"http://www.lighthouselabs.ca", userId: "userRandomID"},
-  "9sm5xK":{longURL:"http://www.google.com", userId: "userRandomID"}
+  "9sm5xK":{longURL:"http://www.google.com", userId: "user2RandomID"}
 };
 
 // Database to store user data.
@@ -60,12 +60,24 @@ const findUserId = (email, password) => {
   return userId;
 }
 
+// Returns the URLs where the userID is equal to the id of the currently logged in user.
+const urlsForUser = (id) => {
+  let userURLs = {};
+  for (const userId in urlDatabase) {
+    if (urlDatabase[userId]["userId"] === id) {
+    userURLs =  { [userId]: urlDatabase[userId] };
+    }
+  }
+  return userURLs;
+}
+
 // Used to keep track of all of the URLs and their shortened forms.
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
+  let userURLs = urlsForUser(userId);
   let templateVars = {
     user: users[userId],
-    urls: urlDatabase
+    urls: userURLs
   };
   res.render("urls_index", templateVars);
 });
@@ -82,9 +94,10 @@ app.post("/urls", (req, res) => {
 // Direct existing users to login page.
 app.get("/login", (req, res) => {
   const userId = req.cookies["user_id"];
+  let userURLs = urlsForUser(userId);
   let templateVars = {
     user: users[userId],
-    urls: urlDatabase
+    urls: userURLs
   };
   res.render("login", templateVars);
 })
@@ -94,7 +107,6 @@ app.post("/login", (req, res) => {
   const email = req.body.email === '' ? null : req.body.email;
   const password = req.body.password === '' ? null : req.body.password;
   let userId = findUserId(email, password);
-  console.log(userId);
   if (emailVerification(email)) {
     if (passwordVerification(password)) {
         res.cookie("user_id", userId);
@@ -116,9 +128,10 @@ app.post("/logout", (req, res) => {
 // Create new GET route to show the form in 'urls_new.js'.
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
+  let userURLs = urlsForUser(userId);
   let templateVars = {
     user: users[userId],
-    urls: urlDatabase
+    urls: userURLs
   };
   if (!userId) {
     res.redirect('/login');
@@ -135,10 +148,12 @@ app.get("/u/:shortURL", (req, res) => {
 // 
 app.get("/urls/:shortURL", (req, res) => {
   const userId = req.cookies["user_id"];
+  let userURLs = urlsForUser(userId);
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]["longURL"],
-    user: users[userId]
+    user: users[userId],
+    urls: userURLs
   };
   res.render("urls_show", templateVars);
 });
@@ -161,9 +176,10 @@ app.post("/urls/:shortURL", (req, res) => {
 // Direct new users to registration page.
 app.get("/register", (req, res) => {
   const userId = req.cookies["user_id"];
+  let userURLs = urlsForUser(userId);
   let templateVars = {
     user: users[userId],
-    urls: urlDatabase
+    urls: userURLs
   };
   res.render("register", templateVars);
 })

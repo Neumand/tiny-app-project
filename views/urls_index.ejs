@@ -4,12 +4,16 @@
   <br>
   <h3><strong>Shortened URLs:</strong></h3>
   <ul>
+  <% if (user) { %>
   <% for(var each in urls) { %>
-  <li><strong><%= each %></strong> : <a href= <%= urls[each] %>> <%= urls[each]%></a></li>
+  <li><strong><%= each %></strong> : <a href= <%= urls[each].longURL %>> <%= urls[each].longURL%></a></li>
   <form style="display: inline" method="POST" action="/urls/<%= each%>/delete">
   <button type="submit" class="btn btn-dark">Delete</button></form>
   <form style="display: inline" method="GET" action="/urls/<%= each%>">
   <button type="submit" class="btn btn-dark">Edit</button></form>
+  <% } %>
+    <% } else { %>
+    <h3>Login to create new URLs <a href="/login">here</a></h3>
     <% }; %>
   </ul>
 </body>

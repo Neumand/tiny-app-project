@@ -10,9 +10,16 @@
   <body style="font-size:20px; padding:50px;">
   <% if (user) { %>
   <h3>Logged in as: <%= user.email %>!</h3>
+  <div class="btn-group">
+  <form action="/urls" method="GET">
+      <button type="submit" class="btn btn-dark">Home</button>
+    </form>
+    </div>
+    <div class="btn-group">
   <form action="/logout" method="POST">
   <button type="submit" class="btn btn-dark">Logout</button>
   </form>
+  </div>
   <% } else{ %>
   <div class="btn-group">
   <form action="/urls" method="GET">
