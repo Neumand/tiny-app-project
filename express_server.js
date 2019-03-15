@@ -63,9 +63,9 @@ const findUserId = (email, password) => {
 // Returns the URLs where the userID is equal to the id of the currently logged in user.
 const urlsForUser = (id) => {
   let userURLs = {};
-  for (const userId in urlDatabase) {
-    if (urlDatabase[userId]["userId"] === id) {
-    userURLs =  { [userId]: urlDatabase[userId] };
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL]["userId"] === id) {
+    userURLs[shortURL] = urlDatabase[shortURL];
     }
   }
   return userURLs;
@@ -167,9 +167,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 // Handle request to edit an existing URL.
 app.post("/urls/:shortURL", (req, res) => {
+  const userId = req.cookies["user_id"];
   let longURL = req.body.longURL;
   let shortURL = req.params.shortURL;
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = {longURL: longURL, userId: userId};
   res.redirect("/urls");
 })
 
@@ -204,5 +205,5 @@ app.post("/register", (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`TinyApp listening on port ${PORT}!`);
 });
