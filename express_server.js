@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 // Used to make the data more readable.
@@ -10,6 +11,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // Used to help read the values from cookies.
 app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2']
+}));
 
 // Set the view engine to be EJS.
 app.set("view engine", "ejs");
@@ -41,14 +46,6 @@ const emailVerification = (email) => {
   const usersArr = Object.values(users);
   return usersArr.some(check => check.email === email);
 }
-
-// If email exists in the DB during login, check if the password corresponds to the email.
-// const passwordVerification = (password) => {
-  // const hashedPassword = users
-  // if (bcrypt.compareSync(password), )
-  // const usersArr = Object.values(users);
-  // return usersArr.some(check => check.password === password);
-// }
 
 // Search the users database for hashed password.
 const findHashedPassword = (email) => {
@@ -87,7 +84,7 @@ const urlsForUser = (id) => {
 
 // Used to keep track of all of the URLs and their shortened forms.
 app.get("/urls", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let userURLs = urlsForUser(userId);
   let templateVars = {
     user: users[userId],
@@ -98,7 +95,7 @@ app.get("/urls", (req, res) => {
 
 // Stores the key-value pairs (shortURL - longURL) into the urlDatabase object.
 app.post("/urls", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let longURL = req.body.longURL;
   let shortURL = generateRandomId();
   if (userId) {
@@ -111,7 +108,7 @@ app.post("/urls", (req, res) => {
 
 // Direct existing users to login page.
 app.get("/login", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let userURLs = urlsForUser(userId);
   let templateVars = {
     user: users[userId],
@@ -128,7 +125,7 @@ app.post("/login", (req, res) => {
   let userId = findUserId(email, hashedPassword);
   if (emailVerification(email)) {
     if (bcrypt.compareSync(password, hashedPassword)) {
-        res.cookie("user_id", userId);
+        req.session.user_id = userId;
         res.redirect("/urls");
       } else {
         res.status(403).send("Incorrect password. Please try again.");
@@ -140,13 +137,13 @@ app.post("/login", (req, res) => {
 
 // User's cookie data will be cleared and therefore logged out.
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect("/urls");
 })
 
 // Create new GET route to show the form in 'urls_new.js'.
 app.get("/urls/new", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let userURLs = urlsForUser(userId);
   let templateVars = {
     user: users[userId],
@@ -166,7 +163,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 // 
 app.get("/urls/:shortURL", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let userURLs = urlsForUser(userId);
   let templateVars = {
     shortURL: req.params.shortURL,
@@ -179,7 +176,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 // Handle request to delete an existing shortened URL.
 app.post("/urls/:shortURL/delete", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let shortURL = req.params.shortURL;
   if (userId) {
     delete urlDatabase[shortURL];
@@ -191,7 +188,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 // Handle request to edit an existing URL.
 app.post("/urls/:shortURL", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let longURL = req.body.longURL;
   let shortURL = req.params.shortURL;
   if (userId) {
@@ -204,7 +201,7 @@ app.post("/urls/:shortURL", (req, res) => {
 
 // Direct new users to registration page.
 app.get("/register", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   let userURLs = urlsForUser(userId);
   let templateVars = {
     user: users[userId],
@@ -228,8 +225,7 @@ app.post("/register", (req, res) => {
       email,
       hashedPassword
     }
-    console.log(users[userId]);
-    res.cookie('user_id', userId);
+    req.session.user_id = userId;
     res.redirect("/urls");
   }
 })
