@@ -5,8 +5,8 @@
   <br>
   <br>
   <h3><strong>TinyURL</strong></h3>
-  <p><strong>Original URL: </strong><%= longURL %></p>
-  <p><strong>Shortened URL: </strong><%= shortURL %></p>
+  <p><strong>Original URL: <%= longURL %></p></strong>
+  <p><strong>Shortened URL: <%= shortURL %></p></strong>
   <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
       <div class="form-group mb-2">
         <label for="longURL">Edit URL:</label>
