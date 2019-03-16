@@ -231,19 +231,22 @@ app.post("/register", (req, res) => {
   const email = req.body.email === '' ? null : req.body.email;
   const password = req.body.password === '' ? null : req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
-  if (email === null || password === null || emailVerification(email)) {
-    res.status(404).send("<h1>User already exists - please register with different email.</h1>");
-  } else {
-    const userId = generateRandomId();
-    users[userId] = {
-      id: userId,
-      email,
-      hashedPassword
-    }
+  if (email !== null || password !== null) {
+    if (emailVerification()) {
+      const userId = generateRandomId();
+      users[userId] = {
+        id: userId,
+        email,
+        hashedPassword
+      }
     req.session.user_id = userId;
     res.redirect("/urls");
-  }
-})
+    } else {
+      res.status(404).send("<h1>User already exists - please register with different email.</h1>");
+    }
+  } else {
+    res.status(400).send("<h1>Please fill out all fields.");
+  }});
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
