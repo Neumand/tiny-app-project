@@ -2,15 +2,13 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
-// Used to make the data more readable.
+// Middleware to make the data more readable.
 app.use(bodyParser.urlencoded({extended: true}));
 
-// Used to help read the values from cookies.
-app.use(cookieParser());
+// Middleware to parse values from cookies.
 app.use(cookieSession({
   name: 'session',
   keys: ['key1', 'key2']
@@ -21,8 +19,8 @@ app.set("view engine", "ejs");
 
 // Database to store shortened URLs.
 const urlDatabase = {
-  "b2xVn2":{longURL:"http://www.lighthouselabs.ca", userId: "userRandomID"},
-  "9sm5xK":{longURL:"http://www.google.com", userId: "user2RandomID"}
+  "b2xVn2": {longURL:"http://www.lighthouselabs.ca", userId: "userRandomID"},
+  "9sm5xK": {longURL:"http://www.google.com", userId: "user2RandomID"}
 };
 
 // Database to store user data.
@@ -71,7 +69,7 @@ const findUserId = (email, hashedPassword) => {
   return userId;
 }
 
-// Returns the URLs where the userID is equal to the id of the currently logged in user.
+// Returns URLs where the userID is equal to the id of the currently logged in user.
 const urlsForUser = (id) => {
   let userURLs = {};
   for (const shortURL in urlDatabase) {
@@ -82,7 +80,7 @@ const urlsForUser = (id) => {
   return userURLs;
 }
 
-// Used to keep track of all of the URLs and their shortened forms.
+// Display long and shortened URLs.
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
   let userURLs = urlsForUser(userId);
@@ -93,7 +91,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// Stores the key-value pairs (shortURL - longURL) into the urlDatabase object.
+// Store new URLs into the database .
 app.post("/urls", (req, res) => {
   const userId = req.session.user_id;
   let longURL = req.body.longURL;
@@ -117,7 +115,7 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 })
 
-// Log in an existing user, verifying that their email exists in the DB and password matches.
+// Login request. Includes verification that email exists in the DB and hashed password matches.
 app.post("/login", (req, res) => {
   const email = req.body.email === '' ? null : req.body.email;
   const password = req.body.password === '' ? null : req.body.password;
@@ -135,13 +133,13 @@ app.post("/login", (req, res) => {
   }
 })
 
-// User's cookie data will be cleared and therefore logged out.
+// Reset user cookie data upon logout.
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/urls");
 })
 
-// Create new GET route to show the form in 'urls_new.js'.
+// Display form to create new shortened URL.
 app.get("/urls/new", (req, res) => {
   const userId = req.session.user_id;
   let userURLs = urlsForUser(userId);
@@ -156,12 +154,13 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
+// Shortcut to acessing the original web page using the shortened URL.
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL]["longURL"];
   res.redirect(`${longURL}`);
 });
 
-// 
+// Display the user's newly shortened URL.
 app.get("/urls/:shortURL", (req, res) => {
   const userId = req.session.user_id;
   let userURLs = urlsForUser(userId);
@@ -210,8 +209,7 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 })
 
-// Create new user and add to the users database.
-// See emailVerification function description above.
+// Create new user and add to the users database after verifying the email does not aready exist.
 app.post("/register", (req, res) => {
   const email = req.body.email === '' ? null : req.body.email;
   const password = req.body.password === '' ? null : req.body.password;
