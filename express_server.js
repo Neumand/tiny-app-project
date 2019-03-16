@@ -181,7 +181,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
     } else {
-      res.status(403).send("Error: Authorization denied.");
+      res.status(403).send("<h1>Error: Authorization denied.</h1>");
     }
 })
 
@@ -194,7 +194,7 @@ app.post("/urls/:shortURL", (req, res) => {
   urlDatabase[shortURL] = {longURL: longURL, userId: userId};
   res.redirect("/urls");
   } else {
-    res.status(403).send("Error: Authorization denied.");
+    res.status(403).send("<h1>Error: Authorization denied.</h1>");
   }
 })
 
@@ -215,7 +215,7 @@ app.post("/register", (req, res) => {
   const password = req.body.password === '' ? null : req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
   if (email === null || password === null || emailVerification(email)) {
-    res.status(404).end();
+    res.status(404).send("<h1>User already exists - please register with different email.</h1>");
   } else {
     const userId = generateRandomId();
     users[userId] = {
