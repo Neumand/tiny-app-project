@@ -126,10 +126,10 @@ app.post("/login", (req, res) => {
         req.session.user_id = userId;
         res.redirect("/urls");
       } else {
-        res.status(403).send("Incorrect password. Please try again.");
+        res.status(403).send("<h1>Incorrect password. Please try again.</h1>");
       }
   } else {
-    res.send("No account found with provided email address.")
+    res.send("<h1>No account found with provided email address.</h1>")
   }
 })
 
