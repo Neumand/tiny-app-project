@@ -232,11 +232,11 @@ app.post("/register", (req, res) => {
   const password = req.body.password === '' ? null : req.body.password;
   if (email === null || password === null) {
     res.status(404).send("<h1>Please fill out all fields.</h1>");
-  } else if (emailVerification()) {
+  } else if (emailVerification(email)) {
     res.status(404).send("<h1>User already exists - please register with different email.</h1>");
   } else {
-    const hashedPassword = bcrypt.hashSync(password, 10);
     const userId = generateRandomId();
+    const hashedPassword = bcrypt.hashSync(password, 10);
     users[userId] = {
       id: userId,
       email,
