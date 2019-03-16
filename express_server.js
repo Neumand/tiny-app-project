@@ -200,7 +200,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     } else {
       res.status(403).send("<h1>Error: Authorization denied.</h1>");
     }
-})
+});
 
 // Handle request to edit an existing URL.
 app.post("/urls/:shortURL", (req, res) => {
@@ -213,7 +213,7 @@ app.post("/urls/:shortURL", (req, res) => {
   } else {
     res.status(403).send("<h1>Error: Authorization denied.</h1>");
   }
-})
+});
 
 // Direct new users to registration page.
 app.get("/register", (req, res) => {
@@ -224,7 +224,7 @@ app.get("/register", (req, res) => {
     urls: userURLs
   };
   res.render("register", templateVars);
-})
+});
 
 // Create new user and add to the users database after verifying the email does not aready exist.
 app.post("/register", (req, res) => {
@@ -245,7 +245,7 @@ app.post("/register", (req, res) => {
     req.session.user_id = userId;
     res.redirect("/urls");
   }
-})
+});
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
