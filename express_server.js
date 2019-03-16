@@ -69,6 +69,19 @@ const findUserId = (email, hashedPassword) => {
   return userId;
 }
 
+// Check userId in DB versus currently logged in user.
+const verifyUserId = (userId) => {
+  let condition = '';
+  for (const id in users) {
+    if (users[id]["id"] === userId) {
+      condition = true;
+    } else {
+      condition = false;
+    }
+  }
+  return condition;
+}
+
 // Returns URLs where the userID is equal to the id of the currently logged in user.
 const urlsForUser = (id) => {
   let userURLs = {};
@@ -170,14 +183,18 @@ app.get("/urls/:shortURL", (req, res) => {
     user: users[userId],
     urls: userURLs
   };
+  if (verifyUserId(userId) && urlDatabase[req.params.shortURL]["userId"] === userId) {
   res.render("urls_show", templateVars);
+  } else {
+    res.status(403).send("<h1>Error: Authorization denied.</h1>");
+  }
 });
 
 // Handle request to delete an existing shortened URL.
 app.post("/urls/:shortURL/delete", (req, res) => {
   const userId = req.session.user_id;
   let shortURL = req.params.shortURL;
-  if (userId) {
+  if (verifyUserId(userId) && urlDatabase[shortURL]["userId"] === userId) {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
     } else {
@@ -190,7 +207,7 @@ app.post("/urls/:shortURL", (req, res) => {
   const userId = req.session.user_id;
   let longURL = req.body.longURL;
   let shortURL = req.params.shortURL;
-  if (userId) {
+  if (verifyUserId(userId) && urlDatabase[shortURL]["userId"] === userId) {
   urlDatabase[shortURL] = {longURL: longURL, userId: userId};
   res.redirect("/urls");
   } else {
