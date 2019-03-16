@@ -1,20 +1,22 @@
   <h1><% include partials/_header %></h1>
   <br>
-  <h2><a href='/urls/new'>Create TinyURL</a></h2>
+  <% if (user) { %>
+  <form style="display: inline" method="GET" action="/urls/new">
+  <button type="submit" class="btn btn-dark btn-lg">Create TinyURL</button></form>
+  <br>
   <br>
   <h3><strong>Shortened URLs:</strong></h3>
-  <ul>
-  <% if (user) { %>
   <% for(var each in urls) { %>
+  <ul>
   <li><strong><%= each %></strong> : <a href= <%= urls[each].longURL %>> <%= urls[each].longURL%></a></li>
   <form style="display: inline" method="POST" action="/urls/<%= each%>/delete">
   <button type="submit" class="btn btn-dark">Delete</button></form>
   <form style="display: inline" method="GET" action="/urls/<%= each%>">
   <button type="submit" class="btn btn-dark">Edit</button></form>
+  </ul>
   <% } %>
     <% } else { %>
-    <h3>Login to create new URLs <a href="/login">here</a></h3>
+    <h3><strong>Please <a href="/login">login</a> to create new URLs</strong></h3>
     <% }; %>
-  </ul>
 </body>
 </html>
