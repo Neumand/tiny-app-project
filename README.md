@@ -20,3 +20,9 @@ A full stack web app built with Node and Express that allows users to shorten lo
 
 1. Install all dependencies: `npm install`
 2. Run the development web server using `node express_server.js` command.
+
+## Accessing Shortened URLs
+
+Shortened URLs can be used to access the relevant web page using the following syntax: `https://u/`**_shortURL_**
+
+# Enjoy!
