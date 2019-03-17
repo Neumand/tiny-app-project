@@ -23,6 +23,6 @@ A full stack web app built with Node and Express that allows users to shorten lo
 
 ## Accessing Shortened URLs
 
-Shortened URLs can be used to access the relevant web page using the following syntax: `https://u/`**_shortURL_**
+Shortened URLs can be used to access the relevant web page using the following syntax: `https://u/[b]shortURL[/b]`
 
 # Enjoy!
